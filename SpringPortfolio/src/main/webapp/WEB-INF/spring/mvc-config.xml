@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		
+	<!-- 히카리 커넥션풀 빈 등록 -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/spring?serverTimezone=Asia/Seoul" />
+		<property name="username" value="root" />
+		<property name="password" value="eo9612gy" />		
+	</bean>
+	
+	<!-- 데이터 소스 객체 빈 등록 --> <!-- 아이디는 내맘대로 -->
+	<bean id="ds" class="com.zaxxer.hikari.HikariDataSource">
+		<constructor-arg ref="hikariConfig" />
+	</bean>
+	
+	
+	
+	<!-- MyBatis 핵심객체 SqlSessionFactory 빈 등록 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds" />
+		<!--  ﻿classpath: == main/resources 매퍼의 파일 위치 설정. -->
+		<property name="mapperLocations" value="classpath:/mappers/**/*Mapper.xml" />
+	</bean>
+
+	<context:component-scan base-package="com.spring.mvc" />
+	
+	<!-- 매퍼의 인터페이스를 스캔하는 설정 -->
+	<mybatis-spring:scan base-package="com.spring.mvc.board.repository"/>
+	<mybatis-spring:scan base-package="com.spring.mvc.user.repository"/>
+		
+</beans>
+
+<!-- 
+설명
+
+mvc-config.xml은 DB연동을 설정하는 곳이다.
+히카리커넥션 풀은 porm.xml에 라이브러리를 등록 후 사용 가능하다.
+﻿beans graph에서 빈등록과 의존성관계 주입을 확인할 수 있다.
+
+﻿mvc-config.xml에 많은것들이 Beans Grapsh에 빈으로 등록이 되있다.
+
+﻿
+classpath: == main/resources
+
+classpath:/mappers/**/*Mapper.xml mappers 폴더안에 /**:어떤 경로든 상관없이 / *Mapper로 끝나는 파일을 설정파일로 인식을 하라.
+
+﻿﻿
+mybatis-spring 체크해야함(하는이유:그래야 등록이 된다고한다)
+
+base-package에 IBoardMapper의 패키지 명을 적는다.
+
+ Bean이 등록된다.
+
+﻿
+
+
+
+
+  -->
+
+
+
+
+
+
+
+

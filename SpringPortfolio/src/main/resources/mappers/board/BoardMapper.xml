@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mvc.board.repository.IBoardMapper">
+
+<!-- DB컬럼명과 VO클래스의 필드명 매핑작업 -->
+	<resultMap id="BoardMap" type="com.spring.mvc.board.model.BoardVO">
+		
+		<id property="boardNo" column="board_no"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="writer" column="writer"/>
+		<result property="regDate" column="reg_date"/>
+		<result property="viewCnt" column="view_cnt"/>
+
+</resultMap>
+
+	<!-- 중복되는 동적 SQL문에 대한 처리 -->
+	<sql id="search"> <!-- 아이디는 내맘대로 -->
+		<!-- 동적 SQL구문 -->
+		<if test="condition == 'title'">
+		WHERE title LIKE CONCAT('%', #{keyword},'%')
+		</if>
+		<if test="condition == 'writer'">
+		WHERE writer LIKE CONCAT('%', #{keyword},'%')
+		</if>
+		<if test="condition == 'content'">
+		WHERE content LIKE CONCAT('%', #{keyword},'%')
+		</if>
+		<if test="condition == 'titleContent'">
+		WHERE title LIKE CONCAT('%', #{keyword},'%')
+		 OR content LIKE CONCAT('%', #{keyword},'%')
+		</if>
+	</sql>
+
+	<insert id="insert">
+		INSERT INTO new_board 
+		  (title, content, writer)
+		VALUES (#{title}, #{content}, #{writer})
+	</insert>
+
+<!-- 조건에 따라서 SQL문이 변화하게 만들어야함. -->
+<!-- DB컬럼명과 VO멤버변수명이 틀리면 resultMap을 해야함. -->
+<select id="getArticleList" resultMap="BoardMap">
+
+SELECT *
+FROM new_board
+<include refid="search" />
+ORDER BY board_no DESC
+LIMIT #{pageStart},#{countPerPage}
+</select>
+
+<select id="countArticles" resultType="int"> <!-- countArticles가 Integer 타입이라 resultType이 int이다. -->
+SELECT COUNT(*)
+FROM new_board
+<include refid="search" />
+</select>
+
+<!-- 여기서 #{boardNo는 IBoardMapper의 BoardVO getArticle(Integer boardNo)에서의
+boardNo이다. 만일 boardNo가 boardNumber라면, boardNumber라고 써야한다. -->
+<select id="getArticle" resultMap="BoardMap">
+
+SELECT *
+FROM new_board
+WHERE board_no =#{boardNo}
+
+</select>
+
+<update id="updateViewCnt">
+		UPDATE new_board 
+		SET view_cnt = view_cnt + 1 
+		WHERE board_no = #{boardNo}
+	</update>
+
+
+<select id="update">
+
+Update new_board
+SET title = #{title},content=#{content}
+WHERE board_no = #{boardNo}
+
+</select>
+
+<delete id="delete">
+DELETE FROM new_board
+WHERE board_no = #{boardNo}
+
+</delete>
+
+<!--  
+ <insert id="insertFile" parameterType="hashMap">
+		INSERT INTO MP_FILE(
+			FILE_NO =#{File_NO},
+			ORG_FILE_NAME =#{ORG_FILE_NAME},
+			STORED_FILE_NAME =#{#{STORED_FILE_NAME},
+			FILE_SIZE =#{FILE_SIZE}
+		)
+    </insert>
+-->
+
+<!--
+<select id="getArticleListPaging" resultMap="BoardMap">
+SELECT *
+FROM new_board
+ORDER BY board_no DESC
+LIMIT #{pageStart},#{countPerPage}
+
+</select>
+
+<select id="getArticleListByTitle" resultMap="BoardMap">
+SELECT * 
+FROM new_board
+WHERE title LIKE CONCAT('%', #{keyword} ,'%')
+ORDER BY board_no DESC
+LIMIT #{pageStart}, #{countPerPage}
+</select>
+
+<select id="countArticlesByTitle" resultType="int">
+
+SELECT COUNT(*)
+FROM new_board
+WHERE title LIKE CONCAT('%', #{keyword} ,'%')
+
+</select>
+
+
+<select id="getArticleListByWriter" resultMap="BoardMap">
+
+SELECT * 
+FROM new_board
+WHERE writer LIKE CONCAT('%', #{keyword} ,'%')
+ORDER BY board_no DESC
+LIMIT #{pageStart}, #{countPerPage}
+
+</select>
+
+<select id="countArticlesByWriter" resultType="int">
+
+SELECT * COUNT(*)
+WHERE writer LIKE CONCAT('%', #{keyword} ,'%')
+ORDER BY board_no DESC
+
+</select>
+
+-->
+
+
+</mapper>
+
+
+
+
+
+

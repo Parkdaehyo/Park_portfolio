@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- 정적 자원(html, css, img, js) 등을 URI 절대경로로 사용하기 위한 매핑처리  -->
+	
+	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/css/**" location="/resources/css/" />
+	<resources mapping="/js/**" location="/resources/js/" />
+	<resources mapping="/assets/**" location="/resources/assets/" />
+	
+	
+	
+	
+		<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.spring.mvc" />
+	
+	
+	<!-- 인터셉터 빈 등록 -->
+	<beans:bean id="testInterceptor" class="com.spring.mvc.commons.interceptor.TestInterceptor"/>
+	<beans:bean id="boardInterceptor" class="com.spring.mvc.commons.interceptor.BoardInterceptor"/>
+	<beans:bean id="autoLoginInterceptor" class="com.spring.mvc.commons.interceptor.AutoLoginInterceptor"/>
+	
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/test1"/>
+			<mapping path="/test2"/>
+			<beans:ref bean="testInterceptor" />
+		</interceptor>
+		
+	</interceptors>
+	
+	<!--  아예 게시판 자체를 막을 경우: <mapping path="/board/*"/> -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/board/write"/>
+			<mapping path="/board/modify"/>
+			<mapping path="/board/delete"/>
+			<beans:ref bean="boardInterceptor" />
+		</interceptor>
+		
+	</interceptors>
+	<interceptors>
+		<interceptor>
+			<mapping path="/"/> <!-- 사이트 들어오자마자 인터셉터 발동시키겠다. -->
+			<beans:ref bean="autoLoginInterceptor" />
+		</interceptor>
+		
+	</interceptors>
+	
+	
+	
+</beans:beans>
