@@ -69,8 +69,9 @@ public class UserController {
 			inputData2 =  service.findid(inputData);
 		} 
 		
-		if(!(inputData2 instanceof UserVO)) {    // Service return 객체가 UserVO일 경우
-			inputData2 = inputData;
+		//비교연산자 instanceof
+		if(!(inputData2 instanceof UserVO)) {    // DB에 연결한 정보의 값 inputData2 객체가 지금 UserVO 객체랑 동일하지 않으면 
+			inputData2 = inputData; //그 inputData값을 다시 UserVO의 객체에 대입시켜라.
 		}
 		
 		//string은 equals비교라고? --> A. String비교는 equals :: String <-> String
