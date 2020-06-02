@@ -34,9 +34,10 @@ public class UserController {
 
 	//회원가입 요청 처리
 	//Rest-api에서 Insert 기능은 -> POST 이다.
+	//수정: put
 
 	@PostMapping("/") // /은 그냥 /user와 같음.
-	public String register(@RequestBody UserVO user) { //클라이언트가 회원가입 정보를 보내줄것이다.
+	public String register(@RequestBody UserVO user) { //클라이언트가 회원가입 정보를 보내줄것이다. //@RequestBody: Rest-api에서 Http 요청에 대해서, 객체를 읽을 수 있도록 해준다. 만일 이것을 붙이지 않았을 경우, UserVO에서 null값이 출력될 것이다. 이것은 postman에서 확인해 볼 수 있다.
 
 		System.out.println("/user/ POST 요청 발생!");
 		System.out.println("param: " + user);
