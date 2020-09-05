@@ -54,6 +54,7 @@
 	</select>
 
 	<!--  자동 로그인을 체크할 경우 쿠키값(세션아이디)과 유지시간을 갱신(수정) -->
+	<!-- =#{}안은 key값 -->
 	<update id="keepLogin">
 	UPDATE new_user
 	SET session_id =#{sessionId},
@@ -68,7 +69,6 @@
 	 
 	select 문이기 때문에 resultMap="UserMap" 받아오기.
 	 -->
-
 	<select id="getUserWithSessionId" resultMap="UserMap">
 	
 	SELECT * FROM new_user

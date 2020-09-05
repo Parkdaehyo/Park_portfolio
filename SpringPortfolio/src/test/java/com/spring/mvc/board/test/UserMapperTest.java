@@ -62,6 +62,25 @@ public class UserMapperTest {
 		
 	}
 	
+	@Test
+	public void Findid() {
+		
+//		UserVO user = new UserVO(); 
+//		user.setName("신짱구");
+//		user.setPhoneNum(1234567890); 
+//		
+//		mapper.findid(user);
+//		System.out.println("user의 값" + user);
+		
+		UserVO user = new UserVO(); 
+		user.setName("신짱구");
+		user.setPhoneNum(123); 
+		
+		UserVO resultUser = mapper.findid(user);
+		System.out.println("user의 값" + resultUser.getAccount());
+			
+	}
+	
 	
 	
 

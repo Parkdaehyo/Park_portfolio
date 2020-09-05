@@ -4,11 +4,14 @@
 <script>
 var bno = '${article.boardNo}'; //${article.boardNo}은 Model이다. commentS.jsp는 detail.jsp에 삽입된 형태고, detail.jsp는 content.jsp에 include 액션태그가 적용된 상태이므로, content.jsp의 Model을 참조할 수 있다. 
 var article ='${article.writer}';
+var login ='${login.account}';
 
-//name 속성의 commentInsertBtn
+
+//name 속성값의 commentInsertBtn
 $('[name=commentInsertBtn]').click(function(){ //detail.jsp에 commentInsertBtn(등록 부분)을 클릭시 발생하는 클릭 이벤트처리
-    var insertData = $('[name=commentInsertForm]').serialize(); //detail.jsp 18번 라인 commentInsertForm의 text내용을 전체 가져옴.
-    commentInsert(insertData); //Insert 함수호출(아래) //댓글을 등록하려면 이렇게 호출부를 작성해야한다고 한다.
+	var login ='${login.account}';
+	var insertData = $('[name=commentInsertForm]').serialize(); //detail.jsp 18번 라인 commentInsertForm의 text내용을 전체 읽을 수 있는  serialize()메서드
+    commentInsert(insertData); //Insert 함수호출(아래) //댓글을 등록하려면 이렇게 호출부를 작성해야한다고 한다. insertData를 매개값을 받는 commentInsert를 호출부로 선언.
 });
  
  
@@ -22,7 +25,8 @@ function commentList(){
         success : function(data){ //통신에 성공했을때 호출할 스크립트 함수. commentController의 mCommentServiceList의 return 값이 결국 Mapper.xml 까지 정상적으로 도달해서 실행이 성공 됬을 경우,
             var a =''; //자바스크립트 식 변수 초기화, a에 공백값을 넣어주어 에러방지
             
-            $.each(data, function(key, value){ 
+            //해석: data라는 배열을 받아서
+            $.each(data, function(key, value){ //$.each() 메서드는 매개 변수로 받은것을 사용해  for in 반복문과 같이 배열이나 객체의 요소를 검사할 수 있는 메서드이다.
             	
             	//자바스크립트에서 html 구문 삽입시키기
                 a += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
@@ -48,6 +52,10 @@ function commentInsert(insertData){
         type : 'post',
         data : insertData,
         success : function(data){
+        	if(login === null) {
+        		console.log(login)
+        		alert("로그인을 해야해요!");
+        	}
             if(data == 1) {
                 commentList(); //댓글 작성 후 댓글 목록 reload
                 $('[name=content]').val('');

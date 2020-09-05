@@ -17,7 +17,7 @@ public class AutoLoginInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private IUserService service;
 	
-	//preHandle 컨트롤러 진입하기 전
+	//preHandle 컨트롤러 진입하기 전에 실행되는 인터셉터
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {

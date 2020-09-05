@@ -23,67 +23,29 @@ import com.spring.mvc.commons.SearchVO;
 import com.spring.mvc.user.model.UserVO;
 import com.spring.mvc.user.service.IUserService;
 
-//깃허브 테스트 5월 8일 2차 수정
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 	
-	//Logger log = Logger.getLogger(this.getClass());
-
 	@Inject
 	private IBoardService service;
 	
 	@Inject
 	private IUserService user_service;
-	
-	
-	//게시글 목록 불러오기 요청
-	/*@GetMapping("/list")
-	public String list(Model model) {
-		List<BoardVO> list = service.getArticleList();
-		
-		//System.out.println("URL: /board/list GET -> result: " + list.size());
-		//list.forEach(article -> System.out.println(article));
-		model.addAttribute("articles" , list); //model로 list.jsp에 화면 전송
-		return "board/list";
-	}*/
-	
-	/*
-	//페이징 처리 이후 게시글 목록 불러오기 요청
-	@GetMapping("/list")
-	public String list(PageVO paging, Model model) {
-		List<BoardVO> list = service.getArticleListPaging(paging);
-		
-		System.out.println("URL: /board/list GET -> result: " + list.size());
-		System.out.println("parameter(페이지번호) : " + paging.getPage() +"번");
-		
-		PageCreator pc = new PageCreator(); //PageVO의 객체와, 페이징 알고리즘을 실행하는 로직의 객체를 생성
-		pc.setPaging(paging); //page정보와 countPerPage의 정보 셋팅.
-		pc.setArticleTotalCount(service.countArticles()); //총 게시물수를 DB에 가져오는 메서드
-		System.out.println(pc);
-		
-		//list.forEach(article -> System.out.println(article));
-		model.addAttribute("articles" , list); //model로 list.jsp에 화면 전송
-		model.addAttribute("pc" , pc); //PageVO의 객체와 알고리즘등을 기록한 로직들을 list.jsp에 전송
-		return "board/list";
-	}
-	*/
-	
-	//검색 처리 이후 게시글 목록 불러오기 요청
+
 	@GetMapping("/list")
 	public String list(SearchVO search, Model model) {
 		
 		String condition = search.getCondition();
 		
-		
 		System.out.println("URL: /board/list GET -> result: ");
 		System.out.println("parameter(페이지번호) : " + search.getPage() +"번");
-		System.out.println("검색 조건: " + condition);
+		System.out.println("검색조건: " + condition);
 		System.out.println("검색어: " + search.getKeyword());
 		
 		
 		PageCreator pc = new PageCreator(); //PageVO의 객체와, 페이징 알고리즘을 실행하는 로직의 객체를 생성
-		pc.setPaging(search); //page정보와 countPerPage의 정보 셋팅.
+		pc.setPaging(search);  //page정보와 countPerPage의 정보 셋팅.
 		
 		List<BoardVO> list = service.getArticleList(search);
 		pc.setArticleTotalCount(service.countArticles(search));
@@ -92,25 +54,6 @@ public class BoardController {
 		model.addAttribute("pc" , pc); //PageVO의 객체와 알고리즘등을 기록한 로직들을 list.jsp에 전송
 		return "board/list";
 		
-		/*List<BoardVO> list = null;
-		
-		if(condition.equals("title")) { //list.jsp의 파라미터값?
-			
-			list = service.getArticleListByTitle(search); //제목으로 검색한 페이지를 보여줘라
-			pc.setArticleTotalCount(service.countArticlesByTitle(search)); //제목으로 검색 한 이후 게시물 수 가져오기 + 페이징 알고리즘
-		
-		}else if(condition.equals("writer")) {
-			list = service.getArticleListByWriter(search); //작성자로 검색한 페이지르
-			pc.setArticleTotalCount(service.countArticlesByWriter(search)); //작성자로 검색 한 이후 게시물의 수를 가져오기 + 페이징 알고리즘
-			
-		}else {
-			list = service.getArticleListPaging(search); //페이지 목록 조회기능
-			pc.setArticleTotalCount(service.countArticles()); //총 게시물 수 조회기능
-		}*/
-	
-		
-		//list.forEach(article -> System.out.println(article));
-		
 	
 	}
 	//게시글 작성페이지 요청
@@ -118,26 +61,26 @@ public class BoardController {
 	public String write(HttpSession session, RedirectAttributes ra) {
 		System.out.println("URL: /board/write => GET");
 		
-		//세션을 불러와서, 그 로그인 값이 null 이라면,
-		//not login 메세지를 보냄. home.jsp
+		//�꽭�뀡�쓣 遺덈윭���꽌, 洹� 濡쒓렇�씤 媛믪씠 null �씠�씪硫�,
+		//not login 硫붿꽭吏�瑜� 蹂대깂. home.jsp
 		
-		//인터셉터로 처리할것이기 때문에 주석처리 하겠다.
+		//�씤�꽣�뀎�꽣濡� 泥섎━�븷寃껋씠湲� �븣臾몄뿉 二쇱꽍泥섎━ �븯寃좊떎.
 		
 		//if(session.getAttribute("login") == null) {
 			//ra.addFlashAttribute("msg" , "not-login");
 			
-			//return "redirect:/"; //그리고 home.jsp로 보낸다.		
+			//return "redirect:/"; //洹몃━怨� home.jsp濡� 蹂대궦�떎.		
 		//}
 		
 		return "board/write";
 	
 	}
 	
-	//게시글 DB등록 요청 --> 게시판 등록버튼 눌렀을때 , 자기 자신(write.jsp)한테 form의 내용들을 보내고
-	@PostMapping("/write") //자기 자신을 열때 파라미터 값을 BoardVO에 대입합니다.
-	public String write(BoardVO article, RedirectAttributes ra) { //write.jsp의 파라미터값 writer,title,content를 담아서
+	//寃뚯떆湲� DB�벑濡� �슂泥� --> 寃뚯떆�뙋 �벑濡앸쾭�듉 �닃���쓣�븣 , �옄湲� �옄�떊(write.jsp)�븳�뀒 form�쓽 �궡�슜�뱾�쓣 蹂대궡怨�
+	@PostMapping("/write") //�옄湲� �옄�떊�쓣 �뿴�븣 �뙆�씪誘명꽣 媛믪쓣 BoardVO�뿉 ���엯�빀�땲�떎.
+	public String write(BoardVO article, RedirectAttributes ra) { //write.jsp�쓽 �뙆�씪誘명꽣媛� writer,title,content瑜� �떞�븘�꽌
 		
-		System.out.println("write 포스트 작동!!");
+		System.out.println("write �룷�뒪�듃 �옉�룞!!");
 		System.out.println("Controller parameter: " + article);
 	
 	
@@ -145,48 +88,50 @@ public class BoardController {
 		
 		ra.addFlashAttribute("msg" , "regSuccess");
 		
-		return "redirect:/board/list"; //list를 여는 방식. 이렇게 해야 데이터베이스에 연결이 되서 가능한가보다.	
+		return "redirect:/board/list"; //list瑜� �뿬�뒗 諛⑹떇. �씠�젃寃� �빐�빞 �뜲�씠�꽣踰좎씠�뒪�뿉 �뿰寃곗씠 �릺�꽌 媛��뒫�븳媛�蹂대떎.	
 	}
 	
 	
 	//게시글 상세 조회 요청
 	@GetMapping("/content/{boardNo}")
-	public String content(@PathVariable Integer boardNo, Model model
-			,@ModelAttribute("p") SearchVO paging) { // "p"가 list.jsp "pc"의 page와 countPerPage를 읽어들임 //content에서 먼저 boardNo를 받아야한다.
-		System.out.println("URL: /board/content => GET"); //이게 안뜬다는건 handlerMapping이 못찾았다는 뜻.
-		System.out.println("parameter(글번호): " + boardNo);
-		BoardVO vo = service.getArticle(boardNo); //getArticle이 Integer boardNo를 받으려면 // BoardVO getArticle(Integer boardNo); BoardVO타입을 받는다.
-		//getArticle이 BoardVO타입을 받는 메서드라서 바로 boardNo를 받게해도크게 상관 없긴 한데, 그냥 vo에 넣은것.
+	public String content(@PathVariable Integer boardNo, HttpSession session, Model model
+			,@ModelAttribute("p") SearchVO paging) { // "p"媛� list.jsp "pc"�쓽 page�� countPerPage瑜� �씫�뼱�뱾�엫 //content�뿉�꽌 癒쇱� boardNo瑜� 諛쏆븘�빞�븳�떎.
+		System.out.println("URL: /board/content => GET"); //�씠寃� �븞�쑍�떎�뒗嫄� handlerMapping�씠 紐살갼�븯�떎�뒗 �쑜.
+		System.out.println("parameter(湲�踰덊샇): " + boardNo);
+		UserVO user = (UserVO)session.getAttribute("login");
+		BoardVO vo = service.getArticle(boardNo); //getArticle�씠 Integer boardNo瑜� 諛쏆쑝�젮硫� // BoardVO getArticle(Integer boardNo); BoardVO���엯�쓣 諛쏅뒗�떎.
+		//getArticle�씠 BoardVO���엯�쓣 諛쏅뒗 硫붿꽌�뱶�씪�꽌 諛붾줈 boardNo瑜� 諛쏄쾶�빐�룄�겕寃� �긽愿� �뾾湲� �븳�뜲, 洹몃깷 vo�뿉 �꽔��寃�.
 		System.out.println("Result Data: " + vo);
-		model.addAttribute("article" , vo); //content.jsp에 getArticle메서드의 데이터를 보냄.
+		model.addAttribute("article" , vo); //content.jsp�뿉 getArticle硫붿꽌�뱶�쓽 �뜲�씠�꽣瑜� 蹂대깂.
+		model.addAttribute("login" , user);
 		return "board/content";
 	}
 	
-	//게시글 삭제 요청
+	//寃뚯떆湲� �궘�젣 �슂泥�
 	@PostMapping("/delete")
 	public String remove(Integer boardNo, PageVO paging, RedirectAttributes ra) {
 		
 		System.out.println("URL: /board/delete => POST");
-		System.out.println("parameter(글 번호): " + boardNo);
+		System.out.println("parameter(湲� 踰덊샇): " + boardNo);
 		service.delete(boardNo);
-		ra.addFlashAttribute("msg", "delSuccess")
-		  .addAttribute("page" , paging.getPage()) //ra생략가능
+		ra.addFlashAttribute("msg", "delSuccess") //�쟾�떖�븳 媛믪� url�뿉 遺숈� �븡�뒗�떎. �씪�쉶�꽦�씠�씪, 由ы봽�젅�떆 �븷 寃쎌슦 �뜲�씠�꽣媛� �냼硫몃맂�떎. �삉�븳, 2媛� �씠�긽 �벝 寃쎌슦 �뜲�씠�꽣�뒗 �냼硫명븳�떎. �뵲�씪�꽌 留듭쓣 �씠�슜�븯�뿬 �븳踰덉뿉 媛믪쓣 �쟾�떖�빐�빞�븳�떎.
+		  .addAttribute("page" , paging.getPage()) //addAttribute: �쟾�떖�븳 媛믪� url �뮘�뿉 遺숈쑝硫�, 由ы봽�젅�떆�빐�룄 �뜲�씠�꽣媛� �쑀吏��맗�땲�떎.
 		  .addAttribute("countPerPage" , paging.getCountPerPage());
 		
 		return "redirect:/board/list";
-		//return "redirect:/board/list?page=" + paging.getPage() 방법1
-		//+"&countPerPage=" + paging.getCountPerPage(); //삭제 과정이 완료 된 후의 list를 재요청 해줘라.
+		//return "redirect:/board/list?page=" + paging.getPage() 諛⑸쾿1
+		//+"&countPerPage=" + paging.getCountPerPage(); //�궘�젣 怨쇱젙�씠 �셿猷� �맂 �썑�쓽 list瑜� �옱�슂泥� �빐以섎씪.
 	}
 	
 	
 	
-	//게시글 수정 페이지 요청 // 수정을 하기위해서는 수정전 정보를 불러와야한다.
+	//寃뚯떆湲� �닔�젙 �럹�씠吏� �슂泥� // �닔�젙�쓣 �븯湲곗쐞�빐�꽌�뒗 �닔�젙�쟾 �젙蹂대�� 遺덈윭���빞�븳�떎.
 	@GetMapping("/modify")
 	public String modify(Integer boardNo, Model model
 			, @ModelAttribute("p") PageVO paging) {
 
 		System.out.println("URL: /board/content => GET"); 
-		System.out.println("parameter(글번호): " + boardNo);
+		System.out.println("parameter(湲�踰덊샇): " + boardNo);
 		
 		BoardVO vo = service.getArticle(boardNo);
 		System.out.println("Result Data: " + vo);
@@ -195,22 +140,22 @@ public class BoardController {
 		return "board/modify";
 	}
 	
-	//게시글 수정 요청 // 궁극적으로 write.jsp 방식하고 매우 비슷함.
+	//寃뚯떆湲� �닔�젙 �슂泥� // 沅곴레�쟻�쑝濡� write.jsp 諛⑹떇�븯怨� 留ㅼ슦 鍮꾩듂�븿.
 	@PostMapping("/modify")
-	public String modify(BoardVO article, RedirectAttributes ra) { //파라미터값을 태우다.
+	public String modify(BoardVO article, RedirectAttributes ra) { //�뙆�씪誘명꽣媛믪쓣 �깭�슦�떎.
 		System.out.println("URL: /board/delete => POST");
-		System.out.println("parameter(글 번호): " + article);
+		System.out.println("parameter(湲� 踰덊샇): " + article);
 		service.update(article);
 		ra.addFlashAttribute("msg" , "modSuccess");
 		return "redirect:/board/content/" + article.getBoardNo();
 	}
 	
-			//회원정보 열람 요청
+			//�쉶�썝�젙蹂� �뿴�엺 �슂泥�
 			@GetMapping("/mypage")
 			public String mypage(UserVO inputData, Model model,HttpSession session) {
 				
 				 
-				System.out.println("mypage 진입!");
+				System.out.println("mypage 吏꾩엯!");
 				System.out.println("Parameter: " + inputData);
 		
 				UserVO user = (UserVO)session.getAttribute("login");
@@ -221,11 +166,11 @@ public class BoardController {
 				return "board/mypage";
 			}
 			
-	//회원 정보 수정 요청
+	//�쉶�썝 �젙蹂� �닔�젙 �슂泥�
 	@PostMapping("/mypage")
 	public String memberUpdate(UserVO vo, RedirectAttributes ra, HttpSession session) {
 		
-		System.out.println("mypage Post 요청이다!");
+		System.out.println("mypage Post �슂泥��씠�떎!");
 		System.out.println(vo);
 		user_service.memberupdate(vo);
 		session.invalidate();

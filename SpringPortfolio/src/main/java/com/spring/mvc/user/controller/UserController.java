@@ -46,38 +46,24 @@ public class UserController {
 		return "joinSuccess"; //joinSuccess.jsp를 열람하라는 뜻이 아니라, 클라이언트에게 이 메세지를 주는것이다.
 	}
 
-	
-	
-//	@GetMapping("/Findid")
-//	public String Findid(UserVO user) {
-//		
-//		System.out.println("Findid 진입!");
-//		
-//		return ("user/login_modal");
-//	}
-	
 
 	//아이디 찾기 요청 처리
 	////////////////////////////// Refactoring //////////////////////////////
 	@PostMapping("/Findid") 
-	public UserVO FindId(@RequestBody UserVO inputData){ //inputData: 클라이언트에서 쓰는 정보 (보내는 정보)
-
-		System.out.println("Null일 경우 \"\"(Null String)"+"\n name : "+
-				inputData.getName()+", phone : "+inputData.getPhoneNum());    // 디버깅 출력문
+	public UserVO FindId(@RequestBody UserVO inputData){
 		
-		UserVO inputData2 = null;
+		System.out.println("입력한 이름" + inputData.getName() + "입력한 폰번호" + inputData.getPhoneNum());
+		UserVO outputData = null;
 		if(!inputData.getName().equals("") && inputData.getPhoneNum() != null) {    // name, phone이 빈값이 아닐 경우
-			inputData2 =  service.findid(inputData);
+			outputData =  service.findid(inputData); //service에서 연결한 이 값은 DB아 데이터가 일치하지 않는 경우에 null을 리턴한다.
 		} 
 		
-		//비교연산자 instanceof
-		if(!(inputData2 instanceof UserVO)) {    // DB에 연결한 정보의 값 inputData2 객체가 지금 UserVO 객체랑 동일하지 않으면 
-			inputData2 = inputData; //그 inputData값을 다시 UserVO의 객체에 대입시켜라.
+		//그래서 이 값이 null이 라면
+		if(outputData == null) { //이게 쉬운 로직은 아님 님 자꾸 코드를 바꿔서 약간 헷갈림..ㅇㅋ 아무튼 아무튼 ㄳㅂㅂㅂ
+			outputData = new UserVO(); //UserVO의 빈객체를 넣는다.
 		}
 		
-		//string은 equals비교라고? --> A. String비교는 equals :: String <-> String
-		
-		return inputData2;
+		return outputData;
 		
 	}
 	///////////////////////////////////////////////////////////////////////////
@@ -138,7 +124,7 @@ public class UserController {
 				//입력된 Password와 DB에 존재하는 Password가 같다면
 				//UserVO의 패스워드 입력과 DB의 데이터가 일치한다면,
 				if(encoder.matches(inputData.getPassword(), dbData.getPassword())){
-					session.setAttribute("login", dbData); //UserVO dbData를 "login"이라는 이름의 세션 객체를 설정.
+					session.setAttribute("login", dbData); //UserVO dbData를 "login"이라는 이름의 세션 객체를 설정. 세션이란? 서버측에 저장되는 객체
 					result = "loginSuccess"; //loginSuccess값 리턴
 					
 					long limitTime = 60 * 60 * 24 * 90; //3개월
@@ -169,7 +155,7 @@ public class UserController {
 						 
 						 long expiredDate = System.currentTimeMillis() + (limitTime * 1000);
 						 Date limitDate = new Date(expiredDate); //그 밀리초단위를 객체로 만들어서 날짜로 바꿔서 저장?
-						 
+						 //session.getId(): 세션 고유 아이디를 가져옴.
 						 service.keepLogin(session.getId(), limitDate, inputData.getAccount());
 					}
 					

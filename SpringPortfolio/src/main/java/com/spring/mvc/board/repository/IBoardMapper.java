@@ -15,7 +15,7 @@ public interface IBoardMapper {
 	void insert(BoardVO article);
 	//void insert(BoardVO aritcle);
 
-	//게시글 단일(상세) 조회기능
+	//게시글 단일 조회기능
 	BoardVO getArticle(Integer boardNo); //Integer == int
 	
 	//게시물 조회수 상승처리

@@ -365,13 +365,13 @@ $(function() {
 			
 			//통신함수 $.ajax()
 			$.ajax({
-				type: "POST",
+				type: "POST", //아이디 정보를 숨기기위해서 POST로 보냈다.
 				url: "/user/checkId", //어디와 통신하는가?	
 				headers: {
 	                "Content-Type": "application/json" //서버에 json타입을 보내겠다
 	            },
 				dataType: "text",  // result값이 ok or No가 들어오므로 text를 써준다.
-				data: id,
+				data: id, //id하나만 서버에 보내면 된다. String형태라서 그냥 써도된다고?
 				success: function(result) { //성공하면 뭐할꺼니?
 					if(result === "OK") {
 						$("#user_id").css("background-color", "#A5D8FA");
@@ -518,18 +518,20 @@ $(function() {
 			dataType: "JSON", //응답받을 데이터의 형태 JSON으로 바꾸니까 됬네??
 			//data: JSON.stringify(name), // <-- JSON.stringify를 사용하면 ""가 붙어서 나오므로, 생략
 			
-			data: JSON.stringify(user), //서버로 전송할 데이터
+			data: JSON.stringify(user), //서버로 전송할 데이터 
 			success: function(result) { //함수의 매개변수는 통신성공시의 데이터가 저장될 곳.
-				console.log("통신 성공!: " + result);
-
+				console.log("통신 성공!: " + result); // 그럼 하나하나 디버깅 해봐요. 일단 Client
+				
 				// Debug 
 				//////////////////////////////////////////////////////////////////////////////////////////
 				//if(result === "id") {
 				//////////////////////////////////////////////////////////////////////////////////////////
-				if(result.account != "" && result.account != null) { // === 3개가 아닌, = 1개로 변경
+				
+				//올바르게 정보를 입력했을 경우에는, UserVO 자체가 null값일리 없으므로, 
+				if(result.account != null) { // 그러니까 여기에는 정상값이 잇어야 되는군요. 그러니까 이상한 값 null이 아닌값 그니까
 					alert("귀하의 아이디는 " + result.account + "입니다.");
-				} else {
-					alert("입력하신 정보를 확인해주세요.");
+				} else { //이건 당연히 UserVO 값이 null값이니까 당연히 이렇게 나오는거군요?ㅇ
+					alert("입력하신 정보를 확인해주세요."); //어떻게 이게 나오는거죠?? 그러니까 이상한값 넣었을때 이게 나온다고요? 네
 				}
 
 			}, //통신 성공시 처리할 내용들을 함수 내부에 작성.
@@ -574,9 +576,9 @@ $(function() {
 				headers: {
 					"Content-Type": "application/json"
 				}, //요청 헤더 정보 , Content-type: 너는 요청할때 어떤 데이터를 보낼건데? 나는 서버에 json 데이터를 보낼거에요.
-				dataType: "text", //응답받을 데이터의 형태  
+				dataType: "text", //응답받을 데이터의 형태  - post방식으로 /user/ 요청시 joinSuceess라는 응답이 오기 때문에 text라고 적은 것이다.
 				data: JSON.stringify(user), //서버로 전송할 데이터
-				success: function(result) { //result == joinSuccess가 담겨지는 곳, 함수의 매개변수는 통신성공시의 데이터가 저장될 곳.
+				success: function(result) { //result == joinSuccess가 담겨지는 곳, 함수의 매개변수는 통신성공시의 데이터가 저장될 곳. 서버가 준 데이터 결과값이 저장되는곳.
 					console.log("통신 성공!: " + result);
 					if(result === "joinSuccess") {
 						alert("회원가입에 성공했습니다!");

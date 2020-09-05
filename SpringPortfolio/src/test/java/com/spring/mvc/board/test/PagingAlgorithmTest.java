@@ -93,6 +93,7 @@ public class PagingAlgorithmTest {
 		paging.setPage(31);
 		int displayPage = 10;
 		
+		//Math.ceil은 올림을 뜻한다.
 		int endPage = (int)Math.ceil(paging.getPage() / (double)displayPage) 
 						* displayPage;
 		System.out.println("끝 페이지 번호: " + endPage + "번");
